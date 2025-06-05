@@ -49,7 +49,8 @@ Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_20
 Я выбрал плату ESP32 S3 т.к. она имеет необходимое количество пинов в режиме AЦП. 
 
 ![image](https://github.com/user-attachments/assets/352f501e-72cd-472c-95ae-b16fa105c388)
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/39483251-6d7c-426a-8f76-fde66d64d504)
+
 
 
 В качестве датчика температуры выбран датчик ATH30 (https://esphome.io/components/sensor/aht10.html). Если есть необходимость использовать другой датчик (например TVOC и т.п.), то его также можно подключить в разъем CN6 i2c шины с небольшой доработкой прошивки. 
