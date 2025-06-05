@@ -1,0 +1,689 @@
+esphome:
+  name: bork-fan
+  friendly_name: BORK FAN
+  platformio_options: # flash mode
+    board_build.flash_mode: dio
+    board_build.f_flash: 80000000L
+    board_build.f_cpu: 240000000L
+
+esp32: # board select
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+logger: # Enable logging
+  level: DEBUG
+  logs:
+    component: ERROR
+
+api: # Enable Home Assistant API
+  encryption:
+    key: !secret API_key
+
+ota: # ota remote
+  - platform: esphome
+    password: !secret OTA_key
+
+wifi: # wi-fi settings 
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "BORK FAN"
+    password: "12345678"
+
+mdns: # mdns if you can use fan for VPN networks your smart home
+  disabled: true
+  
+captive_portal:
+web_server:
+
+fan: # Fan remote       
+  - platform: speed
+    id: fan_speed
+    output: fan_output
+    name: "Bork Fan"
+    speed_count: 3
+    on_turn_on:
+      - if:
+          condition:
+             switch.is_on: oscillation_virtual
+          then:
+            - switch.turn_on: relay4
+            - switch.turn_off: ripple_effect
+
+output: # Output 
+  - platform: template # Fan speed mode
+    id: fan_output
+    type: float 
+    write_action:
+      - if:
+          condition:
+            lambda: return ((state == 0));
+          then:
+            - switch.turn_off: relay1
+            - switch.turn_off: relay2
+            - switch.turn_off: relay3
+            - switch.turn_off: relay4           
+            - output.set_level:
+                id: led_1
+                level: 0
+            - output.set_level:
+                id: led_2
+                level: 0
+            - output.set_level:
+                id: led_3
+                level: 0
+            - output.set_level:
+                id: led_4
+                level: 0
+            - output.set_level:
+                id: led_5
+                level: 0
+            - output.set_level:
+                id: led_6
+                level: 0
+            - output.set_level:
+                id: led_7
+                level: 0
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.1s
+            - output.set_level:
+                id: buzzer
+                level: 0
+            - delay: 0.05s
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.1s
+            - output.set_level:
+                id: buzzer
+                level: 0
+            - sensor.template.publish:
+                id: speed_state
+                state: 0  
+            - logger.log: "Fan off"
+      - if:
+          condition:
+            lambda: return ((state > 0) && (state < 0.4));
+          then:
+            - switch.turn_off: relay2
+            - switch.turn_off: relay3
+            - switch.turn_on: relay1
+            - output.set_level:
+                id: led_7
+                level: 0.4
+            - output.set_level:
+                id: led_5
+                level: 0.4
+            - output.set_level:
+                id: led_6
+                level: 0
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.3s
+            - output.set_level:
+                id: buzzer
+                level: 0
+            - sensor.template.publish:
+                id: speed_state
+                state: 1  
+            - logger.log: "Low speed select"
+
+      - if:
+          condition:
+            lambda: return ((state > 0.4) && (state < 0.7));
+          then:
+            - switch.turn_off: relay1
+            - switch.turn_off: relay3
+            - switch.turn_on: relay2
+            - output.set_level:
+                id: led_7
+                level: 0.4
+            - output.set_level:
+                id: led_6
+                level: 0.4
+            - output.set_level:
+                id: led_5
+                level: 0.4
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.3s
+            - output.set_level:
+                id: buzzer
+                level: 0
+            - sensor.template.publish:
+                id: speed_state
+                state: 2
+            - logger.log: "Medium speed select"
+
+      - if:
+          condition:
+            lambda: return ((state > 0.7));
+          then:
+            - script.stop: ripple_mode
+            - switch.turn_off: relay1
+            - switch.turn_off: relay2
+            - switch.turn_on: relay3
+            - output.set_level:
+                id: led_7
+                level: 0.4
+            - output.set_level:
+                id: led_5
+                level: 0
+            - output.set_level:
+                id: led_6
+                level: 0.4
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.3s
+            - output.set_level:
+                id: buzzer
+                level: 0
+            - sensor.template.publish:
+                id: speed_state
+                state: 3
+            - logger.log: "High speed select"
+
+# LEDs
+  - platform: ledc
+    pin: 10
+    id: buzzer
+  - platform: ledc  
+    pin: 1
+    id: led_1 # Temperature green
+  - platform: ledc  
+    pin: 2
+    id: led_2 # Oscilation green
+  - platform: ledc  
+    pin: 15
+    id: led_3 # Temperature red
+  - platform: ledc  
+    pin: 16
+    id: led_4 # Ripple green
+  - platform: ledc  
+    pin: 17
+    id: led_5 # Speed green
+  - platform: ledc  
+    pin: 18
+    id: led_6 # Speed red
+  - platform: ledc  
+    pin: 19
+    id: led_7 # On/off green
+
+switch: # Remote relay module
+  - platform: restart
+    name: Restart
+    id: manual_restart
+
+  - platform: gpio # Low speed switch
+    internal: true
+    pin: 11
+    id: relay1
+    name: "Low"
+    icon: "mdi:fan"
+
+  - platform: gpio # Medium speed switch
+    pin: 12
+    internal: true
+    id: relay2
+    name: "Medium"
+    icon: "mdi:fan"
+
+  - platform: gpio # High speed switch
+    pin: 13
+    internal: true
+    id: relay3
+    name: "High"
+    icon: "mdi:fan"
+
+  - platform: gpio # Oscillation switch
+    pin: 14
+    internal: true
+    id: relay4
+    name: "Oscillation"
+    icon: "mdi:axis-z-rotate-clockwise"
+    on_turn_on: 
+      - if:
+          condition:
+            - fan.is_on: fan_speed
+            - switch.is_on: oscillation_virtual
+          then:
+            - output.set_level:
+               id: led_2
+               level: 0.3
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.1s
+            - output.set_level:
+                id: buzzer
+                level: 0
+    on_turn_off:
+      - if: 
+          condition:
+            - fan.is_on: fan_speed
+          then: 
+            - output.set_level:
+                id: led_2
+                level: 0
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.05s
+            - output.set_level:
+                id: buzzer
+                level: 0
+            - delay: 0.02s
+            - output.set_level:
+                id: buzzer
+                level: 0.1
+            - delay: 0.05s
+            - output.set_level:
+                id: buzzer
+                level: 0  
+      - if:
+          condition: 
+            - fan.is_off: fan_speed          
+          then:
+            - output.set_level:
+                id: led_2
+                level: 0
+
+  - platform: template # Temperature virtual switch
+    optimistic: true
+    id: temp_control
+    name: "Temperature Controlled"
+    icon: "mdi:thermometer"
+    on_turn_on:
+      then:
+        - script.stop: ripple_mode
+        - output.set_level:
+            id: led_3
+            level: 0
+        - output.set_level:
+            id: led_1
+            level: 0.3
+        - output.set_level:
+            id: buzzer
+            level: 0.1
+        - delay: 0.1s
+        - output.set_level:
+            id: buzzer
+            level: 0
+    on_turn_off:
+      then:
+        - output.set_level:
+            id: led_1
+            level: 0
+        - output.set_level:
+            id: led_3
+            level: 0
+        - output.set_level:
+            id: buzzer
+            level: 0.1
+        - delay: 0.05s
+        - output.set_level:
+            id: buzzer
+            level: 0
+        - delay: 0.02s
+        - output.set_level:
+            id: buzzer
+            level: 0.1
+        - delay: 0.05s
+        - output.set_level:
+            id: buzzer
+            level: 0
+
+
+  - platform: template # Oscilation mode virtual switch
+    optimistic: true
+    name: "Oscillation mode" 
+    id: oscillation_virtual
+    icon: "mdi:axis-z-rotate-clockwise"
+    internal: False
+    disabled_by_default: False
+
+
+  - platform: template # Ripple effect virtual switch
+    optimistic: true
+    name: "Ripple effect" 
+    id: ripple_effect
+    icon: "mdi:air-filter"
+    internal: False
+    on_turn_on: 
+      - if:
+          condition:
+            - fan.is_on: fan_speed
+          then:
+            - fan.turn_off: fan_speed
+            - switch.turn_off: temp_control
+            - output.set_level:
+                id: led_4
+                level: 0.4
+            - script.execute: ripple_mode
+            - switch.turn_on: oscillation_virtual
+            - switch.turn_on: relay4
+            - logger.log: "Ripple mode started"
+    on_turn_off:
+      - if:   
+          condition:
+            - script.is_running: ripple_mode
+          then:
+            - script.stop: ripple_mode
+            - switch.turn_off: oscillation_virtual
+            - switch.turn_off: relay4
+            - switch.turn_off: relay1
+            - switch.turn_off: relay2
+            - switch.turn_off: relay3
+            - output.set_level:
+                id: led_4
+                level: 0
+            - logger.log: "Ripple mode stopped"
+            - fan.turn_on: fan_speed
+
+
+i2c: # i2c foe temperature sensor
+  sda: GPIO8
+  scl: GPIO9
+  scan: true
+  id: bus_a
+  frequency: 10kHz
+
+sensor: # Sensors
+  - platform: template  # Speed state sensor
+    name: "Speed state"
+    id: speed_state
+    update_interval: 15s
+    icon: "mdi:fan"
+
+  - platform: aht10 # Temperature and humiduty sensor
+    variant: AHT20
+    id: temp
+    temperature:
+      name: "Living Room Temperature"
+      on_value_range:
+        - above: !lambda if (id(temp_control).state) {return (id(start_temp).state); } 
+          then:
+            - fan.turn_on: 
+                id: fan_speed
+                speed: 2
+            - switch.turn_on: oscillation_virtual
+            - switch.turn_on: relay4
+        - below: !lambda if (id(temp_control).state); {return (id(stop_temp).state);}
+          then:
+            - delay: 30s
+            - fan.turn_off: fan_speed
+#    humidity:
+#      name: "Living Room Humidity"
+    update_interval: 15s
+    i2c_id: bus_a
+    address: 0x38
+
+  - platform: wifi_signal
+    name:  Wi-Fi RSSI
+    id: rssi
+    update_interval: 60s
+
+number: # Fan temperature auto mode 
+  - platform: template # Fan start temperature
+    name: "Fan Start Temp"
+    id: start_temp
+    internal: false
+    max_value: 30.0
+    min_value: 20.0
+    initial_value: 30
+    step: 1
+    optimistic: true
+    mode: slider
+
+  - platform: template # Fan stop temperature
+    name: "Fan Stop Temp"
+    id: stop_temp
+    internal: false
+    initial_value: 50
+    max_value: 30.0
+    min_value: 20.0
+    step: 1
+    optimistic: true
+    mode: slider
+
+binary_sensor: # Binary sensors
+  - platform: template # Fan state binary sensor
+    name: "Fan state"
+    id: fan_state
+    lambda: |-
+      if (id(speed_state).state > 0) {
+        return true;
+      } else {
+        return false;
+      }
+
+  - platform: gpio # On/Off button  
+    pin:
+      number: 4
+      inverted: true
+      mode: input_pullup
+    name: "On/Off"  
+    internal: true
+    filters:
+      - delayed_on: 100ms
+    on_click:
+      - if:
+          condition:
+            fan.is_off: fan_speed
+          then:
+            - fan.turn_on: fan_speed
+            - logger.log: "ON Clicked"
+          else:
+            - fan.turn_off: fan_speed
+            - logger.log: "OFF Clicked"
+    on_multi_click: 
+      - timing:
+          - ON for 3s to 5s
+          - OFF for at least 0.5s
+        then:
+          - output.set_level:
+              id: buzzer
+              level: 0.1
+          - delay: 1s
+          - output.set_level:
+              id: buzzer
+              level: 0
+          - delay: 0.02s
+          - output.set_level:
+              id: buzzer
+              level: 0.1
+          - delay: 0.05s
+          - output.set_level:
+              id: buzzer
+              level: 0
+          - delay: 0.02s
+          - output.set_level:
+              id: buzzer
+              level: 0.1
+          - delay: 0.05s
+          - output.set_level:
+              id: buzzer
+              level: 0
+          - output.set_level: 
+              id: led_1
+              level: 1
+          - delay: 0.5s
+          - output.set_level: 
+              id: led_1
+              level: 1
+          - delay: 0.5s
+          - output.set_level: 
+              id: led_1
+              level: 1
+          - delay: 1s
+          - logger.log: "Single Long Clicked. Restarting ESP32..."
+          - switch.turn_on: manual_restart
+        
+  - platform: gpio # Oscillation button  
+    pin:
+      number: 5
+      inverted: true
+      mode: input_pullup
+    name: "Oscillation" 
+    internal: true
+    filters:
+      - delayed_on: 100ms
+    on_click:
+      - if:
+          condition:
+            - fan.is_on: fan_speed
+            - switch.is_off: relay4
+          then:
+            - switch.turn_on: oscillation_virtual
+            - switch.turn_on: relay4
+          else:
+            - switch.turn_off: oscillation_virtual
+            - switch.turn_off: relay4
+
+  - platform: gpio # Temperature mode button  
+    pin:
+      number: 6
+      inverted: true
+      mode: input_pullup
+    name: "Auto Temp set"  
+    internal: true
+    filters:
+      - delayed_on: 100ms
+    on_click:
+      - if:
+          condition: 
+            - script.is_running: ripple_mode
+          then: 
+            - switch.turn_off: ripple_effect
+      - if: 
+          condition:
+            not: 
+              - script.is_running: ripple_mode
+          then:
+            - switch.toggle: temp_control
+            - number.set:
+                id: start_temp
+                value: 26
+            - number.set:
+                id: stop_temp
+                value: 25
+            - logger.log: "Autotemp mode double Clicked. Set start temperature 26, stop temperature 25"
+    on_double_click: 
+      - if:
+          condition: 
+            - script.is_running: ripple_mode
+          else: 
+            - switch.turn_off: ripple_effect
+      - if: 
+          condition:
+            not: 
+              - script.is_running: ripple_mode
+          then:
+            - number.set:
+                id: start_temp
+                value: 27
+            - number.set:
+                id: stop_temp
+                value: 26
+            - output.set_level:
+                id: led_1
+                level: 0
+            - output.set_level:
+                id: led_3
+                level: 0.4
+            - logger.log: "Autotemp mode double Clicked. Set start temperature 27, stop temperature 26"
+      - if:
+          condition: 
+            - switch.is_off: temp_control
+          then:
+            - switch.turn_on: temp_control
+            - number.set:
+                id: start_temp
+                value: 27
+            - number.set:
+                id: stop_temp
+                value: 26
+            - output.set_level:
+                id: led_1
+                level: 0
+            - output.set_level:
+                id: led_3
+                level: 0.4
+            - logger.log: "Autotemp mode double Clicked. Set start temperature 27, stop temperature 26"      
+
+  - platform: gpio # Ripple mode button
+    pin:
+      number: 7
+      inverted: true
+      mode: input_pullup
+    name: "Ripple effect" 
+    internal: true
+    filters:
+      - delayed_on: 100ms
+    on_click: 
+      - if:
+          condition:
+            - fan.is_on: fan_speed
+          then:
+            - switch.turn_on: oscillation_virtual
+            - switch.turn_on: relay4
+            - switch.turn_on: ripple_effect
+      - if:
+          condition: 
+            - script.is_running: ripple_mode
+          else: 
+            - switch.turn_off: ripple_effect
+
+  - platform: gpio # Speed select button
+    pin:
+      number: 3
+      inverted: true
+      mode: input_pullup
+    name: "Speed select"  
+    internal: true
+    filters:
+      - delayed_on: 100ms
+    on_click:
+      - if:
+          condition:
+            - fan.is_on: fan_speed
+          then:
+            - fan.cycle_speed:
+                id: fan_speed
+                off_speed_cycle: false
+            - logger.log: "Speed select cycle Clicked" 
+      - if:
+          condition: 
+            - script.is_running: ripple_mode
+          else: 
+            - switch.turn_off: ripple_effect
+
+text_sensor: # Wi-fi connected text button                                                                                                                                                                                                                    
+  - platform: wifi_info
+    ip_address:
+      name: IP Address
+    ssid:
+      name: SSID
+
+script:  # Repeat script for ripple effect
+  - id: ripple_mode 
+    mode: queued  
+    then:  
+      - logger.log: "Ripple mode running..."    
+      - delay: 3s 
+      - switch.turn_off: relay2
+      - switch.turn_off: relay3
+      - switch.turn_on: relay1
+      - delay: 3s
+      - switch.turn_off: relay1
+      - switch.turn_off: relay3
+      - switch.turn_on: relay2
+      - script.execute: ripple_mode
