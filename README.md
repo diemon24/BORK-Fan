@@ -76,4 +76,16 @@ Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_20
   <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_230544.JPG?raw=true!">
 </picture>
 
+Сравнение нового контроллера со штатной платой:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_222543.JPG">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_222543.JPG">
+  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_222543.JPG">
+</picture>
+
+Я не стал проектировать новые платы для кнопок и светодиодов - на светодиодной плате я использовал штатные. Не смотря на то, что для управления светодиодами используется ШИМ, я все равно заменил перемычку между светодиодами TYPE и SPEED (выпаял нужный по цветовой схеме с демонтированной штатной платы) и соединил каплей припоя черный провод (GND) с дорожкой, идущей сразу под местом подпайки - дав светодиоду SWING GND подключение. Собственно больше никаких доработок не производилось. 
+
+
+
 
