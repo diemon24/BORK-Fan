@@ -1,10 +1,7 @@
 # Вентилятор BORK ESPHOME 
 Модернизация вентилятора BORK CF TOR4135 BK для ESPHome
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/1_55253.jpg?raw=true">
-  <source media="(prefers-color-scheme: light)" srcset="[https://github.com/diemon24/BORK-Fun/blob/main/img/SCH_BORK%20FAN_1-P1_2025-06-05.png?raw=true](https://github.com/diemon24/BORK-Fun/blob/main/img/1_55253.jpg?raw=true)">
-  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/1_55253.jpg?raw=true)">
-</picture>
+![image](https://github.com/user-attachments/assets/f24ba285-db0f-4c65-ab9d-7a27ca6564b9)
+
 
 Перед тем как модернизировать вентилятор я ставил перед собой задачу не только оставить текущий функционал, но и дополнить его - вентилятор должен уметь работать без интеграции с HomeAssistant. Но и сама интеграция с моим умным домом позволит расширить возможности вентилятора. 
 Сразу оговорюсь, что я пытался использовать вентилятор через SmartIR, но в практике такое использование обернулось некорректной работой из-за работы функции осцилляции (вращения) - ИК сигналы просто не всегда улавливались из-за того, что вентилятор в момент отправки команды мог быть отвернут от ИК-передатчика. Ну и привязка данного вентилятора к комнате, в которой установлен ИК-передачик такое себе - вентилятор нужно иметь возможность носить в разные комнаты. 
@@ -20,11 +17,11 @@ IR коды для управления вентилятором через шт
 - Световая индикация, включая 2 кнопки с трехцветной индикацией (выбор скорости, таймер)
 - Управление через ИК-пульт
 
-Целевой функционал: 
+Новый функционал: 
 - Вкл/Выкл (один клик), перезагрузка ESP - мультиклик 3c
 - Выбор скорости (3 скорости)
 - Режим эффекта природного ветра (волнообразный)
-- Таймер выключения (никогда не использовал - считаю самой бесполезной функцией - разработчикам BORK привет)
+- Режим "По температуре" - один клик и двоное нажатие кнопки на панели управления вентилятором выбирает два режима: 1. Вкл/выкл по достижению температуры в помещении 26 и 25 градусов соответственно, 2. Вкл/Выкл по достижению температуры в помещении 27 и 26 градусов соответственно. Более точные настройки можно выполнить в карточке HomeAssistant.  
 - Вкл/Выкл осцилляции (вращения вентилятора по своей оси, для распределения воздушного потока в помещении)
 - Звуковая индикация нажатий с разными эффектами
 - Световая индикация, включая 2 кнопки с трехцветной индикацией (выбор скорости, таймер)
@@ -37,17 +34,12 @@ IR коды для управления вентилятором через шт
 # Модернизация: 
 
 Схема блока управления вентилятором:
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/SCH_BORK%20FAN_1-P1_2025-06-05.png?raw=true">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/SCH_BORK%20FAN_1-P1_2025-06-05.png?raw=true">
-  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/SCH_BORK%20FAN_1-P1_2025-06-05.png?raw=true">
-</picture>
+![image](https://github.com/user-attachments/assets/7caa9f32-cb5d-4d26-a4d2-1a562989f157)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/3D_PCB4_2025-06-05_top.png?raw=true">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/3D_PCB4_2025-06-05_top.png?raw=true">
-  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/3D_PCB4_2025-06-05_top.png?raw=true">
-</picture>
+![image](https://github.com/user-attachments/assets/c03315d1-4681-4d80-b3af-2ef14ed7b021)
+
+![image](https://github.com/user-attachments/assets/6c88ee3e-b056-460a-a6ab-a0d524986c3f)
+
 
 Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_2025-06-05_ver.1.1.zip
 
@@ -61,30 +53,45 @@ Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_20
 
 Монтируем компоненты на плату:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250601_235638%202.JPG?raw=true">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250601_235638%202.JPG?raw=true">
-  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250601_235638%202.JPG?raw=true">
-</picture>
+![IMG_20250601_235638](https://github.com/user-attachments/assets/60d17455-1080-4cf0-8326-2b443edb218f)
+
 
 На нижней стороны платы подготовлены места для мотажа RC фильтра (C2-R12, C3-R13, C4-R14, C5-R15), которые (как рекомендуют некоторые непроверенные источники в сети Интернет) необходимы для защиты симистора, и резисторов подтяжки (R16-R19). Но по факту RC и PULL-UP я не использую, т.к. электродвигатели вентилятора не имеют высокой мощности. Заявленная производителем мощность потребления вентилятора - не более 40Вт, когда как используются симисторы с возможностью подключения нагрузки до 1А на канал (±220 Вт). Тестировал не долго, но все работает прекрасно. 
 Это моя первая разработка платы и схемы в EasyEDA для ESPHome, поэтому не судите строго. В испытаниях MOCов и симисторов, а также в разработке схемы и платы мне помогал Владимир @Greg_v_v, за что выражаю ему  благодарность. 
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_230544.JPG?raw=true!">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_230544.JPG?raw=true!">
-  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_230544.JPG?raw=true!">
-</picture>
+![image](https://github.com/user-attachments/assets/b7c53e6d-aaeb-4f6d-b2f2-766b18ceb931)
+
 
 Сравнение нового контроллера со штатной платой:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_222543.JPG">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_222543.JPG">
-  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/diemon24/BORK-Fun/blob/main/img/IMG_20250602_222543.JPG">
-</picture>
+![IMG_20250602_222543](https://github.com/user-attachments/assets/c2f7fa85-5b4c-4af8-84b5-30729b21337e)
 
-Я не стал проектировать новые платы для кнопок и светодиодов - на светодиодной плате я использовал штатные. Не смотря на то, что для управления светодиодами используется ШИМ, я все равно заменил перемычку между светодиодами TYPE и SPEED (выпаял нужный по цветовой схеме с демонтированной штатной платы) и соединил каплей припоя черный провод (GND) с дорожкой, идущей сразу под местом подпайки - дав светодиоду SWING GND подключение. Собственно больше никаких доработок не производилось. 
+
+Я не стал проектировать новые платы для кнопок и светодиодов, а использовал штатные вполне подходящие платы. Не смотря на то, что для управления светодиодами используется ШИМ, для порядка на аппаратном уровне я все равно заменил перемычку между светодиодами TYPE и SPEED (выпаял нужный по цветовой схеме с демонтированной штатной платы) и соединил каплей припоя черный провод (GND) с дорожкой, идущей сразу под местом подпайки - дав светодиоду SWING GND подключение. Собственно больше никаких доработок не производилось. 
+
+Если при сборке соблюсти цветовую маркировку проводов при подключении разъемов CN2 и CN3 (как у меня на фото), тогда не потребуется ничего переделывать в YAML файле ESPHome https://github.com/diemon24/BORK-Fun/blob/main/bork_fun.yaml. 
+
+Монтируем плату в корпус, при этом повернув ее USB-C разъемами ESP32-S3 к тыловой стороне вентилятора. 
+
+Перед монтажом обратите внимание на цветовую гамму проводов для управления электродвигателями - это необходимо учесть, чтобы скоростной режим и функция осцилляции функционировали корректно: 
+![IMG_20250602_230321](https://github.com/user-attachments/assets/13ba73bd-4081-463e-ab4a-7077d1bca685)
+
+![IMG_20250601_163346](https://github.com/user-attachments/assets/16da0fa4-c632-4a93-97a3-199e8716ec61)
+
+![IMG_20250603_005233](https://github.com/user-attachments/assets/212da8f3-bb88-4db6-b650-5d399ea66ce3)
+
+![IMG_20250603_005219](https://github.com/user-attachments/assets/7bd442f5-815d-4c85-a3a3-369003d707d2)
+
+
+
+Монтируем (клеем) датчик температуры на задней стенке вентилятора:
+![image](https://github.com/user-attachments/assets/eddfed44-2846-4b64-9e45-79a8532cbf94)
+
+
+
+Вот что мы получили в HomeAssistant: 
+
+<img width="799" alt="image" src="https://github.com/user-attachments/assets/31c60f03-009a-48c3-ac83-766e8a5960e7" />
 
 
 
