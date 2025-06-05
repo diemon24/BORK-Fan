@@ -94,7 +94,7 @@ Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_20
 <img width="799" alt="image" src="https://github.com/user-attachments/assets/31c60f03-009a-48c3-ac83-766e8a5960e7" />
 
 
-**Благодарности: **
+# Благодарности:
 Помогал тестировать связку оптопары, давал рекомендации по схеме и плате Владимир @Greg_v_v, за что выражаю ему непомерную благодарность. 
 
 
