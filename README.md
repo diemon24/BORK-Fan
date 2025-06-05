@@ -51,7 +51,6 @@ Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_20
 Я выбрал плату ESP32 S3 т.к. она имеет необходимое количество пинов в режиме AЦП. 
 
 ![image](https://github.com/user-attachments/assets/352f501e-72cd-472c-95ae-b16fa105c388)
-![image](https://github.com/user-attachments/assets/39483251-6d7c-426a-8f76-fde66d64d504)
 
 
 
