@@ -103,7 +103,8 @@ Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_20
 
 <img width="812" alt="image" src="https://github.com/user-attachments/assets/9ac5805a-2fe9-47ea-8de5-c13a346ef819" />
 
-<img width="799" alt="image" src="https://github.com/user-attachments/assets/31c60f03-009a-48c3-ac83-766e8a5960e7" />
+<img width="806" alt="image" src="https://github.com/user-attachments/assets/5a174fb2-31f3-4af5-a268-9518cf77aefb" />
+
 
 
 # Благодарности:
