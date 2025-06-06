@@ -101,9 +101,11 @@ Gerber файл в https://github.com/diemon24/BORK-Fun/blob/main/Gerber_PCB4_20
 
 Вот что мы получили в HomeAssistant: 
 
-<img width="812" alt="image" src="https://github.com/user-attachments/assets/9ac5805a-2fe9-47ea-8de5-c13a346ef819" />
+<img width="544" alt="image" src="https://github.com/user-attachments/assets/7ff26dc7-0b72-4b22-85ed-9775dcbb3bb9" />
 
-<img width="806" alt="image" src="https://github.com/user-attachments/assets/5a174fb2-31f3-4af5-a268-9518cf77aefb" />
+
+<img width="766" alt="image" src="https://github.com/user-attachments/assets/f9ed4a3f-65da-4b3c-8f69-fa975a1b64fd" />
+
 
 
 
