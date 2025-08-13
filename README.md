@@ -1,4 +1,4 @@
-# Интегрируем Вентилятор BORK в ESPHome
+# Делаем вентилятор BORK умным и интегрируем в Home Assistant
 Модернизация вентилятора BORK CF TOR4135 BK для ESPHome
 ![image](https://github.com/user-attachments/assets/f24ba285-db0f-4c65-ab9d-7a27ca6564b9)
 
